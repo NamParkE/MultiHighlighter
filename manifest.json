@@ -1,0 +1,39 @@
+{
+  "manifest_version": 3,
+  "name": "멀티 단어 하이라이터",
+  "version": "1.0.0",
+  "description": "웹페이지에서 여러 단어를 색깔별로 동시에 표시합니다.",
+  "minimum_chrome_version": "121",
+  "permissions": ["storage", "sidePanel", "contextMenus"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "side_panel": {
+    "default_path": "panel.html"
+  },
+  "action": {
+    "default_title": "멀티 단어 하이라이터 열기",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_idle",
+      "all_frames": true,
+      "match_about_blank": true,
+      "match_origin_as_fallback": true
+    }
+  ]
+}

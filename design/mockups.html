@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>패널 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px;
+    background: #e9ebee;
+    font-family: Pretendard, "Malgun Gothic", system-ui, sans-serif;
+    font-size: 13px; color: #1c1f23;
+    -webkit-font-smoothing: antialiased;
+  }
+  .board { display: flex; gap: 32px; align-items: flex-start; justify-content: center; }
+  .col > .label { font-size: 13px; font-weight: 600; margin: 0 0 4px 2px; }
+  .col > .sub { font-size: 12px; color: #6b7280; margin: 0 0 12px 2px; }
+  .frame {
+    width: 340px; height: 640px; overflow: hidden;
+    border-radius: 10px; border: 1px solid #d5d9de;
+    box-shadow: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.06);
+    display: flex; flex-direction: column;
+  }
+  svg.i { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .tnum { font-variant-numeric: tabular-nums; }
+  kbd { font: 500 11px/1 Pretendard, sans-serif; padding: 2px 5px; border-radius: 4px; }
+
+  /* ---------- A: 라이트 기본형 ---------- */
+  .a { background: #fff; }
+  .a .top { padding: 14px 14px 12px; border-bottom: 1px solid #eef0f2; }
+  .a .bar { display: flex; align-items: center; gap: 8px; }
+  .a .logo { width: 22px; height: 22px; border-radius: 6px; background: #1c1f23; display: grid; place-items: center; }
+  .a .logo i { display: block; height: 3px; border-radius: 2px; margin: 1.5px 0; }
+  .a .title { font-weight: 650; font-size: 14px; }
+  .a .preset { margin-left: 2px; display: flex; align-items: center; gap: 2px; color: #6b7280; padding: 3px 6px; border-radius: 6px; }
+  .a .preset:hover { background: #f3f4f6; }
+  .a .sp { flex: 1; }
+  .a .iconbtn { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 6px; color: #6b7280; }
+  .a .iconbtn:hover { background: #f3f4f6; color: #1c1f23; }
+  .a .toggle { width: 30px; height: 18px; border-radius: 9px; background: #1c1f23; position: relative; }
+  .a .toggle::after { content: ""; position: absolute; right: 2px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
+  .a .field { margin-top: 12px; display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 10px; border: 1px solid #d5d9de; border-radius: 8px; color: #9aa1a9; }
+  .a .field.focus { border-color: #1c1f23; box-shadow: 0 0 0 3px rgba(28,31,35,.08); color: #1c1f23; }
+  .a .field span { flex: 1; color: #9aa1a9; }
+  .a .field kbd { background: #f3f4f6; color: #6b7280; border: 1px solid #e5e7eb; }
+  .a .opts { margin-top: 10px; display: flex; gap: 6px; }
+  .a .opt { display: flex; align-items: center; gap: 5px; height: 26px; padding: 0 9px; border-radius: 6px; border: 1px solid #e5e7eb; color: #4b5563; font-size: 12px; }
+  .a .opt.on { background: #1c1f23; border-color: #1c1f23; color: #fff; }
+  .a .meta { display: flex; justify-content: space-between; padding: 12px 14px 6px; font-size: 12px; color: #6b7280; }
+  .a .meta b { color: #1c1f23; font-weight: 600; }
+  .a ul { list-style: none; margin: 0; padding: 0 6px; flex: 1; }
+  .a li { display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 8px; border-radius: 8px; }
+  .a li:hover, .a li.hover { background: #f5f6f7; }
+  .a li.sel { background: #f1f3f5; }
+  .a .grip { color: #c4c9cf; visibility: hidden; margin-right: -4px; }
+  .a li.hover .grip { visibility: visible; }
+  .a .sw { width: 14px; height: 14px; border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .a .w { flex: 1; font-weight: 500; }
+  .a .n { color: #6b7280; min-width: 40px; text-align: right; }
+  .a li.off .w { color: #a4abb3; }
+  .a li.off .sw { opacity: .35; }
+  .a .navs { display: flex; gap: 2px; }
+  .a .navs .iconbtn { width: 24px; height: 24px; }
+  .a .bottom { border-top: 1px solid #eef0f2; padding: 10px 14px; display: flex; align-items: center; gap: 8px; font-size: 12px; color: #6b7280; }
+  .a .site { display: flex; align-items: center; gap: 6px; color: #1c1f23; font-weight: 500; }
+  .a .fav { width: 14px; height: 14px; border-radius: 3px; background: #03c75a; }
+
+  /* ---------- B: 다크 컴팩트형 ---------- */
+  .b { background: #17191c; color: #e6e8eb; }
+  .b .top { padding: 12px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid #26292e; }
+  .b .title { font-weight: 600; font-size: 13px; }
+  .b .count-badge { font-size: 11px; color: #9aa1a9; background: #23262b; padding: 2px 6px; border-radius: 4px; }
+  .b .sp { flex: 1; }
+  .b .iconbtn { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 5px; color: #9aa1a9; }
+  .b .iconbtn.on { color: #7cd992; }
+  .b .add { margin: 12px; display: flex; gap: 6px; }
+  .b .field { flex: 1; height: 32px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: #1f2226; border: 1px solid #2e3237; border-radius: 6px; color: #6f767e; }
+  .b .btn { height: 32px; padding: 0 12px; border-radius: 6px; background: #e6e8eb; color: #17191c; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+  .b .seg { margin: 0 12px; display: flex; background: #1f2226; border: 1px solid #2e3237; border-radius: 6px; padding: 2px; }
+  .b .seg div { flex: 1; text-align: center; padding: 5px 0; border-radius: 4px; font-size: 12px; color: #9aa1a9; }
+  .b .seg .on { background: #2e3237; color: #e6e8eb; }
+  .b .thead { display: flex; margin: 14px 12px 0; padding: 0 8px 6px; font-size: 11px; color: #6f767e; border-bottom: 1px solid #26292e; }
+  .b .thead .c1 { flex: 1; }
+  .b ul { list-style: none; margin: 0; padding: 4px 4px; flex: 1; }
+  .b li { display: flex; align-items: center; gap: 10px; height: 34px; padding: 0 16px; border-radius: 6px; }
+  .b li.sel { background: #23262b; }
+  .b .dot { width: 8px; height: 8px; border-radius: 50%; }
+  .b .w { flex: 1; }
+  .b .n { width: 46px; text-align: right; color: #9aa1a9; }
+  .b li.sel .n { color: #e6e8eb; }
+  .b .navs { width: 52px; display: flex; justify-content: flex-end; gap: 2px; color: #6f767e; }
+  .b .navs svg { width: 14px; height: 14px; }
+  .b li.off { color: #5c6269; }
+  .b li.off .dot { opacity: .3; }
+  .b .bar-row { margin: 0 16px 6px; height: 4px; border-radius: 2px; display: flex; overflow: hidden; gap: 2px; }
+  .b .bottom { border-top: 1px solid #26292e; padding: 10px 12px; display: flex; gap: 14px; font-size: 11px; color: #6f767e; }
+  .b kbd { background: #26292e; color: #b8bec5; }
+
+  /* ---------- C: 칩 시각형 ---------- */
+  .c { background: #fafaf9; }
+  .c .top { padding: 16px 16px 0; display: flex; align-items: center; gap: 8px; }
+  .c .title { font-weight: 700; font-size: 15px; letter-spacing: -.01em; }
+  .c .sp { flex: 1; }
+  .c .iconbtn { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 6px; color: #78716c; }
+  .c .field { margin: 14px 16px 0; min-height: 88px; padding: 10px; background: #fff; border: 1px solid #e7e5e4; border-radius: 10px; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 6px; }
+  .c .chip { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 6px 0 10px; border-radius: 6px; font-weight: 500; color: #1c1917; }
+  .c .chip .n { font-size: 11px; font-weight: 600; background: rgba(255,255,255,.6); padding: 1px 5px; border-radius: 4px; }
+  .c .chip svg { width: 13px; height: 13px; opacity: .5; }
+  .c .chip.sel { box-shadow: 0 0 0 2px #1c1917; }
+  .c .chip.off { background: #f0efed !important; color: #a8a29e; text-decoration: line-through; }
+  .c .chip.off .n { background: transparent; }
+  .c .caret { height: 28px; display: flex; align-items: center; color: #a8a29e; padding-left: 4px; }
+  .c .detail { margin: 12px 16px 0; padding: 14px; background: #fff; border: 1px solid #e7e5e4; border-radius: 10px; }
+  .c .dhead { display: flex; align-items: center; gap: 8px; }
+  .c .dhead .sw { width: 10px; height: 10px; border-radius: 3px; }
+  .c .dhead b { font-size: 14px; }
+  .c .pos { margin-left: auto; color: #78716c; }
+  .c .stepper { margin-top: 12px; display: flex; gap: 6px; }
+  .c .stepper div { flex: 1; height: 34px; border: 1px solid #e7e5e4; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; color: #44403c; font-weight: 500; }
+  .c .stepper .primary { background: #1c1917; border-color: #1c1917; color: #fff; }
+  .c .ctx { margin-top: 12px; font-size: 12px; line-height: 1.6; color: #57534e; background: #fafaf9; border-radius: 6px; padding: 8px 10px; }
+  .c .ctx mark { background: #ffe066; outline: 2px solid #1c1917; outline-offset: 0; border-radius: 2px; padding: 0 1px; color: inherit; }
+  .c .sect { margin: 18px 16px 8px; font-size: 12px; font-weight: 600; color: #78716c; display: flex; justify-content: space-between; }
+  .c .dist { margin: 0 16px; display: grid; gap: 7px; }
+  .c .dist .row { display: grid; grid-template-columns: 62px 1fr 26px; align-items: center; gap: 8px; font-size: 12px; color: #57534e; }
+  .c .dist .track { height: 6px; background: #f0efed; border-radius: 3px; overflow: hidden; }
+  .c .dist .fill { height: 100%; border-radius: 3px; }
+  .c .dist .row span:last-child { text-align: right; }
+  .c .bottom { margin-top: auto; padding: 12px 16px; display: flex; align-items: center; gap: 8px; border-top: 1px solid #e7e5e4; font-size: 12px; color: #78716c; }
+  .c .switch { margin-left: auto; display: flex; align-items: center; gap: 6px; color: #1c1917; font-weight: 500; }
+  .c .toggle { width: 30px; height: 18px; border-radius: 9px; background: #1c1917; position: relative; }
+  .c .toggle::after { content: ""; position: absolute; right: 2px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+  <symbol id="down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="grip" viewBox="0 0 24 24"><circle cx="9" cy="6" r="1"/><circle cx="15" cy="6" r="1"/><circle cx="9" cy="12" r="1"/><circle cx="15" cy="12" r="1"/><circle cx="9" cy="18" r="1"/><circle cx="15" cy="18" r="1"/></symbol>
+  <symbol id="eyeoff" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 10.6a2 2 0 0 0 2.8 2.8M9.4 5.2A9.8 9.8 0 0 1 12 5c5 0 9 4.5 10 7a12 12 0 0 1-2.6 3.6M6.1 6.1C4 7.5 2.6 9.6 2 12c1 2.5 5 7 10 7a9.6 9.6 0 0 0 4.4-1"/></symbol>
+  <symbol id="power" viewBox="0 0 24 24"><path d="M12 3v9M6.4 6.4a8 8 0 1 0 11.2 0"/></symbol>
+  <symbol id="sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+  <symbol id="list" viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></symbol>
+  <symbol id="case" viewBox="0 0 24 24"><path d="M3 18 7.5 6 12 18M4.7 14h5.6M16 10.5a3 3 0 0 1 5 2.2V18M21 14.5c-1-.5-5-1-5 1.8 0 2.5 4 2 5-.3"/></symbol>
+  <symbol id="word" viewBox="0 0 24 24"><path d="M3 7v10M21 7v10M7 12h10"/></symbol>
+  <symbol id="chev" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+</svg>
+
+<div class="board">
+
+  <!-- A -->
+  <div class="col">
+    <p class="label">A. 라이트 · 기본형</p>
+    <p class="sub">무난하고 깔끔한 목록형. 마우스를 올린 행에만 이동 버튼 노출</p>
+    <div class="frame a">
+      <div class="top">
+        <div class="bar">
+          <div class="logo"><div style="width:12px"><i style="background:#ffd43b;width:12px"></i><i style="background:#69db7c;width:8px"></i><i style="background:#74c0fc;width:10px"></i></div></div>
+          <span class="title">하이라이터</span>
+          <span class="preset">업무용 <svg class="i" style="width:14px;height:14px"><use href="#chev"/></svg></span>
+          <span class="sp"></span>
+          <div class="toggle" title="전체 켜기"></div>
+          <div class="iconbtn"><svg class="i"><use href="#x"/></svg></div>
+        </div>
+        <div class="field focus"><svg class="i"><use href="#plus"/></svg><span>단어 추가 · 쉼표로 여러 개</span><kbd>Enter</kbd></div>
+        <div class="opts">
+          <div class="opt"><svg class="i" style="width:14px;height:14px"><use href="#case"/></svg>대소문자 구분</div>
+          <div class="opt"><svg class="i" style="width:14px;height:14px"><use href="#word"/></svg>단어 단위</div>
+        </div>
+      </div>
+      <div class="meta"><span>단어 5개 · 활성 4</span><span>이 페이지 <b class="tnum">21</b>건</span></div>
+      <ul>
+        <li class="sel"><svg class="i grip"><use href="#grip"/></svg><div class="sw" style="background:#ffd43b"></div><span class="w">사과</span><span class="n tnum">3 / 12</span><div class="navs"><div class="iconbtn"><svg class="i"><use href="#up"/></svg></div><div class="iconbtn"><svg class="i"><use href="#down"/></svg></div></div></li>
+        <li class="hover"><svg class="i grip"><use href="#grip"/></svg><div class="sw" style="background:#69db7c"></div><span class="w">바나나</span><span class="n tnum">5</span><div class="navs"><div class="iconbtn"><svg class="i"><use href="#up"/></svg></div><div class="iconbtn"><svg class="i"><use href="#down"/></svg></div></div></li>
+        <li><svg class="i grip"><use href="#grip"/></svg><div class="sw" style="background:#74c0fc"></div><span class="w">포도</span><span class="n tnum">3</span><div class="navs" style="visibility:hidden"><div class="iconbtn"></div><div class="iconbtn"></div></div></li>
+        <li class="off"><svg class="i grip"><use href="#grip"/></svg><div class="sw" style="background:#ffa8a8"></div><span class="w">딸기</span><span class="n" style="color:#a4abb3"><svg class="i" style="width:14px;height:14px;vertical-align:-2px"><use href="#eyeoff"/></svg></span><div class="navs" style="visibility:hidden"><div class="iconbtn"></div><div class="iconbtn"></div></div></li>
+        <li><svg class="i grip"><use href="#grip"/></svg><div class="sw" style="background:#d0bfff"></div><span class="w">apple pie</span><span class="n tnum">1</span><div class="navs" style="visibility:hidden"><div class="iconbtn"></div><div class="iconbtn"></div></div></li>
+      </ul>
+      <div class="bottom">
+        <span class="site"><span class="fav"></span>naver.com</span>
+        <span class="sp" style="flex:1"></span>
+        <span>이 사이트에서 끄기</span>
+        <div class="iconbtn" style="width:24px;height:24px"><svg class="i"><use href="#more"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="col">
+    <p class="label">B. 다크 · 컴팩트형</p>
+    <p class="sub">개발자 도구 느낌. 많은 단어를 한눈에, 키보드로 빠르게</p>
+    <div class="frame b">
+      <div class="top">
+        <span class="title">Multi Highlighter</span>
+        <span class="count-badge tnum">21 matches</span>
+        <span class="sp"></span>
+        <div class="iconbtn"><svg class="i"><use href="#list"/></svg></div>
+        <div class="iconbtn on"><svg class="i"><use href="#power"/></svg></div>
+        <div class="iconbtn"><svg class="i"><use href="#x"/></svg></div>
+      </div>
+      <div class="add">
+        <div class="field"><svg class="i"><use href="#plus"/></svg>단어 추가</div>
+        <div class="btn">추가</div>
+      </div>
+      <div class="seg"><div class="on">부분 일치</div><div>단어 단위</div><div>Aa 구분</div></div>
+      <div class="thead"><span class="c1">단어</span><span style="width:46px;text-align:right">개수</span><span style="width:52px;text-align:right">이동</span></div>
+      <ul>
+        <li class="sel"><span class="dot" style="background:#ffd43b"></span><span class="w">사과</span><span class="n tnum">3/12</span><span class="navs"><svg class="i"><use href="#up"/></svg><svg class="i"><use href="#down"/></svg></span></li>
+        <li><span class="dot" style="background:#69db7c"></span><span class="w">바나나</span><span class="n tnum">5</span><span class="navs"><svg class="i"><use href="#up"/></svg><svg class="i"><use href="#down"/></svg></span></li>
+        <li><span class="dot" style="background:#74c0fc"></span><span class="w">포도</span><span class="n tnum">3</span><span class="navs"><svg class="i"><use href="#up"/></svg><svg class="i"><use href="#down"/></svg></span></li>
+        <li class="off"><span class="dot" style="background:#ffa8a8"></span><span class="w">딸기</span><span class="n">꺼짐</span><span class="navs"></span></li>
+        <li><span class="dot" style="background:#d0bfff"></span><span class="w">apple pie</span><span class="n tnum">1</span><span class="navs"><svg class="i"><use href="#up"/></svg><svg class="i"><use href="#down"/></svg></span></li>
+        <li><span class="dot" style="background:#ffc078"></span><span class="w">계약서</span><span class="n tnum">0</span><span class="navs"></span></li>
+        <li><span class="dot" style="background:#63e6be"></span><span class="w">견적</span><span class="n tnum">0</span><span class="navs"></span></li>
+      </ul>
+      <div class="bar-row"><span style="flex:12;background:#ffd43b"></span><span style="flex:5;background:#69db7c"></span><span style="flex:3;background:#74c0fc"></span><span style="flex:1;background:#d0bfff"></span></div>
+      <div class="bottom"><span><kbd>Alt</kbd> <kbd>↓</kbd> 다음</span><span><kbd>Alt</kbd> <kbd>↑</kbd> 이전</span><span><kbd>Alt</kbd> <kbd>H</kbd> 켜기/끄기</span></div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="col">
+    <p class="label">C. 칩 · 시각형</p>
+    <p class="sub">단어를 태그처럼. 선택한 단어의 문맥 미리보기와 분포 표시</p>
+    <div class="frame c">
+      <div class="top">
+        <span class="title">하이라이터</span>
+        <span class="sp"></span>
+        <div class="iconbtn"><svg class="i"><use href="#sliders"/></svg></div>
+        <div class="iconbtn"><svg class="i"><use href="#x"/></svg></div>
+      </div>
+      <div class="field">
+        <span class="chip sel" style="background:#ffe066">사과 <span class="n tnum">12</span><svg class="i"><use href="#x"/></svg></span>
+        <span class="chip" style="background:#b2f2bb">바나나 <span class="n tnum">5</span><svg class="i"><use href="#x"/></svg></span>
+        <span class="chip" style="background:#a5d8ff">포도 <span class="n tnum">3</span><svg class="i"><use href="#x"/></svg></span>
+        <span class="chip off">딸기 <span class="n">0</span><svg class="i"><use href="#x"/></svg></span>
+        <span class="chip" style="background:#e5dbff">apple pie <span class="n tnum">1</span><svg class="i"><use href="#x"/></svg></span>
+        <span class="caret">단어 입력…</span>
+      </div>
+      <div class="detail">
+        <div class="dhead"><span class="sw" style="background:#ffe066"></span><b>사과</b><span class="pos tnum">3 / 12</span></div>
+        <div class="ctx">…올해 수확한 <mark>사과</mark>는 작년보다 당도가 높아 소비자 반응이 좋았다…</div>
+        <div class="stepper">
+          <div><svg class="i"><use href="#up"/></svg>이전</div>
+          <div class="primary">다음<svg class="i"><use href="#down"/></svg></div>
+        </div>
+      </div>
+      <div class="sect"><span>이 페이지 분포</span><span class="tnum">총 21건</span></div>
+      <div class="dist">
+        <div class="row"><span>사과</span><div class="track"><div class="fill" style="width:100%;background:#fcc419"></div></div><span class="tnum">12</span></div>
+        <div class="row"><span>바나나</span><div class="track"><div class="fill" style="width:42%;background:#51cf66"></div></div><span class="tnum">5</span></div>
+        <div class="row"><span>포도</span><div class="track"><div class="fill" style="width:25%;background:#4dabf7"></div></div><span class="tnum">3</span></div>
+        <div class="row"><span>apple pie</span><div class="track"><div class="fill" style="width:8%;background:#9775fa"></div></div><span class="tnum">1</span></div>
+      </div>
+      <div class="bottom"><span>naver.com</span><span class="switch">표시 <span class="toggle"></span></span></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

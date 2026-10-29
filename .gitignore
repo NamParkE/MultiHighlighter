@@ -1,0 +1,7 @@
+# Release zips (uploaded to GitHub Releases, not kept in git)
+*.zip
+dist/
+.vscode/
+.idea/
+Thumbs.db
+desktop.ini

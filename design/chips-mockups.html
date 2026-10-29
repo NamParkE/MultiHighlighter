@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>블록형 패널 시안</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 32px 28px;
+    background: #e8eaed;
+    font-family: Pretendard, "Malgun Gothic", system-ui, sans-serif;
+    font-size: 13px;
+    -webkit-font-smoothing: antialiased;
+  }
+  .board { display: grid; grid-template-columns: repeat(4, 300px); gap: 24px; justify-content: center; }
+  .label { font-size: 13px; font-weight: 650; color: #1c1f23; margin: 0 0 3px 2px; }
+  .sub { font-size: 12px; color: #6b7280; margin: 0 0 12px 2px; min-height: 32px; line-height: 1.35; }
+  .frame {
+    width: 300px; height: 560px; overflow: hidden;
+    border-radius: 10px; border: 1px solid #d5d9de;
+    box-shadow: 0 1px 2px rgba(0,0,0,.05), 0 6px 20px rgba(0,0,0,.06);
+    display: flex; flex-direction: column;
+  }
+  svg.i { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+  .tnum { font-variant-numeric: tabular-nums; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px 6px; }
+  .chip { position: relative; display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 9px; border-radius: 7px; font-weight: 500; white-space: nowrap; }
+  .chip .x { position: absolute; top: -6px; right: -6px; width: 17px; height: 17px; border-radius: 50%; display: grid; place-items: center; }
+  .chip .x svg { width: 10px; height: 10px; stroke-width: 2.6; }
+  .sp { flex: 1; }
+  .ib { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 6px; }
+
+  /* ===== A. 라이트 정제형 ===== */
+  .A { background: #fff; color: #1c1f23; }
+  .A .hd { display: flex; align-items: center; gap: 8px; padding: 14px 14px 0; }
+  .A .logo { width: 22px; height: 22px; border-radius: 6px; background: #1c1f23; display: flex; flex-direction: column; justify-content: center; padding-left: 5px; gap: 2px; }
+  .A .logo i { display: block; height: 3px; border-radius: 2px; }
+  .A .ttl { font-weight: 700; font-size: 14px; }
+  .A .ib { color: #6b7280; }
+  .A .sw { width: 30px; height: 18px; border-radius: 9px; background: #1c1f23; position: relative; }
+  .A .sw::after { content: ""; position: absolute; right: 2px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
+  .A .in { margin: 14px 14px 0; height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 6px 0 11px; border: 1px solid #d5d9de; border-radius: 9px; color: #9aa1a9; }
+  .A .in span { flex: 1; }
+  .A .in .btn { height: 28px; padding: 0 12px; border-radius: 6px; background: #1c1f23; color: #fff; display: flex; align-items: center; font-weight: 600; }
+  .A .opts { display: flex; gap: 14px; margin: 10px 16px 0; color: #4b5563; font-size: 12px; }
+  .A .opts label { display: flex; align-items: center; gap: 6px; }
+  .A .cb { width: 14px; height: 14px; border: 1.5px solid #c4c9cf; border-radius: 4px; }
+  .A .cb.on { background: #1c1f23; border-color: #1c1f23; }
+  .A .sec { display: flex; justify-content: space-between; margin: 18px 16px 10px; font-size: 12px; color: #6b7280; }
+  .A .sec b { color: #1c1f23; }
+  .A .chips { padding: 0 14px; }
+  .A .chip { color: #1c1f23; }
+  .A .chip .n { font-size: 11px; font-weight: 650; background: rgba(255,255,255,.65); border-radius: 4px; padding: 1px 5px; }
+  .A .chip.sel { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1c1f23; }
+  .A .chip.off { background: #f1f3f5 !important; color: #a4abb3; }
+  .A .chip.off span:first-child { text-decoration: line-through; }
+  .A .chip .x { background: #1c1f23; color: #fff; box-shadow: 0 0 0 2px #fff; }
+  .A .card { margin: 16px 14px 0; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; }
+  .A .card .row { display: flex; align-items: center; gap: 8px; }
+  .A .card .dot { width: 10px; height: 10px; border-radius: 3px; }
+  .A .card b { font-size: 14px; }
+  .A .card .pos { margin-left: auto; color: #6b7280; }
+  .A .card .acts { display: flex; gap: 6px; margin-top: 12px; }
+  .A .card .acts div { height: 32px; border: 1px solid #e5e7eb; border-radius: 7px; display: flex; align-items: center; justify-content: center; gap: 5px; color: #374151; font-weight: 500; }
+  .A .card .acts .g { flex: 1; }
+  .A .card .acts .p { flex: 1; background: #1c1f23; border-color: #1c1f23; color: #fff; }
+  .A .card .acts .s { width: 32px; }
+  .A .ft { margin-top: auto; border-top: 1px solid #eef0f2; padding: 11px 16px; display: flex; font-size: 12px; color: #6b7280; }
+
+  /* ===== B. 태그 입력형 ===== */
+  .B { background: #f7f7f5; color: #1c1917; }
+  .B .hd { display: flex; align-items: center; gap: 8px; padding: 16px 16px 0; }
+  .B .ttl { font-weight: 700; font-size: 15px; letter-spacing: -.01em; }
+  .B .ib { color: #78716c; }
+  .B .box { align-content: flex-start; margin: 14px 14px 0; background: #fff; border: 1.5px solid #1c1917; border-radius: 12px; padding: 10px; min-height: 120px; }
+  .B .chip { height: 26px; padding: 0 8px; border-radius: 6px; color: #1c1917; }
+  .B .chip .n { font-size: 11px; color: rgba(28,25,23,.6); font-weight: 600; }
+  .B .chip .x { background: #1c1917; color: #fff; box-shadow: 0 0 0 2px #fff; }
+  .B .chip.sel { box-shadow: inset 0 0 0 1.5px #1c1917; }
+  .B .chip.off { background: #f0efed !important; color: #a8a29e; }
+  .B .chip.off span:first-child { text-decoration: line-through; }
+  .B .caret { height: 26px; display: flex; align-items: center; color: #a8a29e; }
+  .B .caret i { display: inline-block; width: 1.5px; height: 15px; background: #1c1917; margin-right: 3px; }
+  .B .hint { margin: 8px 16px 0; font-size: 11.5px; color: #a8a29e; display: flex; gap: 10px; }
+  .B kbd { font: 600 10.5px Pretendard, sans-serif; padding: 1px 5px; border: 1px solid #d6d3d1; border-bottom-width: 2px; border-radius: 4px; color: #57534e; background: #fff; }
+  .B .seg { margin: 16px 14px 0; display: flex; gap: 6px; }
+  .B .seg div { flex: 1; height: 32px; display: flex; align-items: center; justify-content: center; border-radius: 8px; background: #fff; border: 1px solid #e7e5e4; color: #57534e; font-size: 12px; }
+  .B .seg .on { background: #1c1917; color: #fff; border-color: #1c1917; }
+  .B .nav { margin: 16px 14px 0; background: #fff; border: 1px solid #e7e5e4; border-radius: 12px; padding: 12px; }
+  .B .nav .top { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #78716c; }
+  .B .nav .w { font-size: 18px; font-weight: 700; color: #1c1917; margin-top: 4px; display: flex; align-items: baseline; gap: 8px; }
+  .B .nav .w small { font-size: 13px; font-weight: 500; color: #78716c; }
+  .B .nav .bar { margin-top: 10px; height: 6px; background: #f0efed; border-radius: 3px; position: relative; }
+  .B .nav .bar i { position: absolute; top: -3px; width: 3px; height: 12px; border-radius: 2px; background: #d6d3d1; }
+  .B .nav .bar i.cur { background: #1c1917; }
+  .B .nav .btns { display: flex; gap: 6px; margin-top: 12px; }
+  .B .nav .btns div { flex: 1; height: 32px; border-radius: 8px; border: 1px solid #e7e5e4; display: flex; align-items: center; justify-content: center; gap: 4px; color: #44403c; font-weight: 500; }
+  .B .ft { margin-top: auto; padding: 12px 16px; display: flex; align-items: center; font-size: 12px; color: #78716c; }
+  .B .ft .tg { width: 30px; height: 18px; border-radius: 9px; background: #1c1917; position: relative; margin-left: 6px; }
+  .B .ft .tg::after { content: ""; position: absolute; right: 2px; top: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; }
+
+  /* ===== C. 다크형 ===== */
+  .C { background: #141619; color: #e6e8eb; }
+  .C .hd { display: flex; align-items: center; gap: 8px; padding: 13px 12px; border-bottom: 1px solid #23262b; }
+  .C .ttl { font-weight: 650; }
+  .C .badge { font-size: 11px; color: #9aa1a9; background: #23262b; border-radius: 4px; padding: 2px 6px; }
+  .C .ib { color: #8a9099; }
+  .C .ib.on { color: #7cd992; }
+  .C .in { margin: 12px; height: 34px; display: flex; align-items: center; gap: 8px; padding: 0 10px; background: #1c1f23; border: 1px solid #2d3136; border-radius: 7px; color: #6b727b; }
+  .C .in span { flex: 1; }
+  .C .in kbd { font: 500 10.5px Pretendard, sans-serif; color: #9aa1a9; background: #2a2e33; padding: 2px 5px; border-radius: 4px; }
+  .C .chips { padding: 4px 12px 0; }
+  .C .chip { background: transparent; border: 1px solid; height: 28px; padding: 0 9px 0 8px; color: #e6e8eb; }
+  .C .chip .d { width: 8px; height: 8px; border-radius: 50%; }
+  .C .chip .n { font-size: 11px; color: #9aa1a9; }
+  .C .chip.sel { background: #23262b; }
+  .C .chip .x { background: #e6e8eb; color: #141619; box-shadow: 0 0 0 2px #141619; }
+  .C .chip.off { color: #5c6269; border-color: #2d3136 !important; }
+  .C .chip.off .d { opacity: .3; }
+  .C .chip.off span:nth-child(2) { text-decoration: line-through; }
+  .C .det { margin: 14px 12px 0; padding: 10px 10px 10px 12px; background: #1c1f23; border-radius: 8px; display: flex; align-items: center; gap: 8px; }
+  .C .det .d { width: 8px; height: 8px; border-radius: 50%; }
+  .C .det b { font-weight: 600; }
+  .C .det .pos { margin-left: auto; color: #9aa1a9; }
+  .C .det .ib { width: 26px; height: 26px; background: #2a2e33; color: #e6e8eb; }
+  .C .opts { margin: 14px 12px 0; display: flex; background: #1c1f23; border: 1px solid #2d3136; border-radius: 7px; padding: 2px; }
+  .C .opts div { flex: 1; text-align: center; padding: 6px 0; border-radius: 5px; color: #8a9099; font-size: 12px; }
+  .C .opts .on { background: #2d3136; color: #e6e8eb; }
+  .C .dist { margin: 18px 12px 0; }
+  .C .dist .t { font-size: 11px; color: #6b727b; margin-bottom: 8px; display: flex; justify-content: space-between; }
+  .C .dist .bar { height: 6px; display: flex; gap: 2px; border-radius: 3px; overflow: hidden; }
+  .C .ft { margin-top: auto; border-top: 1px solid #23262b; padding: 10px 12px; font-size: 11px; color: #6b727b; display: flex; gap: 12px; }
+  .C .ft kbd { font: 500 10.5px Pretendard, sans-serif; color: #b8bec5; background: #23262b; padding: 1px 5px; border-radius: 4px; }
+
+  /* ===== D. 미니멀 점형 ===== */
+  .D { background: #fff; color: #111827; }
+  .D .hd { display: flex; align-items: center; gap: 6px; padding: 14px 14px 12px; }
+  .D .ttl { font-weight: 650; font-size: 13.5px; }
+  .D .ib { color: #9ca3af; }
+  .D .in { margin: 0 14px; height: 36px; display: flex; align-items: center; gap: 8px; padding: 0 2px; border-bottom: 1.5px solid #111827; color: #9ca3af; font-size: 14px; }
+  .D .in span:first-child { flex: 1; }
+  .D .in .plus { width: 24px; height: 24px; border-radius: 50%; background: #111827; color: #fff; display: grid; place-items: center; }
+  .D .in .plus svg { width: 13px; height: 13px; stroke-width: 2.4; }
+  .D .meta { margin: 18px 16px 10px; display: flex; align-items: baseline; gap: 6px; }
+  .D .meta .big { font-size: 26px; font-weight: 700; letter-spacing: -.02em; }
+  .D .meta .s { color: #6b7280; font-size: 12px; }
+  .D .meta .opt { margin-left: auto; font-size: 12px; color: #6b7280; display: flex; gap: 10px; }
+  .D .meta .opt .on { color: #111827; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+  .D .chips { padding: 0 14px; }
+  .D .chip { background: #f3f4f6; height: 30px; padding: 0 11px 0 9px; border-radius: 15px; color: #111827; }
+  .D .chip .d { width: 10px; height: 10px; border-radius: 50%; box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+  .D .chip .n { color: #6b7280; font-size: 12px; }
+  .D .chip .x { background: #ef4444; color: #fff; box-shadow: 0 0 0 2px #fff; }
+  .D .chip.sel { background: #111827; color: #fff; }
+  .D .chip.sel .n { color: #9ca3af; }
+  .D .chip.off { color: #c0c4cb; background: #f9fafb; }
+  .D .chip.off .d { opacity: .35; }
+  .D .stepper { margin: 18px 14px 0; display: flex; align-items: center; gap: 10px; padding: 6px 6px 6px 14px; border-radius: 22px; background: #111827; color: #fff; }
+  .D .stepper .w { font-weight: 600; }
+  .D .stepper .pos { color: #9ca3af; margin-left: auto; }
+  .D .stepper .ib { width: 30px; height: 30px; border-radius: 50%; background: #1f2937; color: #fff; }
+  .D .ft { margin-top: auto; padding: 12px 16px; display: flex; align-items: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #f3f4f6; }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="up" viewBox="0 0 24 24"><path d="m18 15-6-6-6 6"/></symbol>
+  <symbol id="down" viewBox="0 0 24 24"><path d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></symbol>
+  <symbol id="power" viewBox="0 0 24 24"><path d="M12 3v9M6.4 6.4a8 8 0 1 0 11.2 0"/></symbol>
+  <symbol id="sliders" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+</svg>
+
+<div class="board">
+
+  <!-- A -->
+  <div>
+    <p class="label">A. 라이트 정제형</p>
+    <p class="sub">지금 구조를 다듬은 안. 선택한 단어는 아래 카드에서 이동·색상·끄기</p>
+    <div class="frame A">
+      <div class="hd">
+        <div class="logo"><i style="width:12px;background:#ffd43b"></i><i style="width:8px;background:#69db7c"></i><i style="width:10px;background:#74c0fc"></i></div>
+        <span class="ttl">하이라이터</span><span class="sp"></span>
+        <div class="sw"></div>
+        <div class="ib"><svg class="i"><use href="#x"/></svg></div>
+      </div>
+      <div class="in"><svg class="i"><use href="#plus"/></svg><span>단어 입력 · 쉼표로 여러 개</span><div class="btn">추가</div></div>
+      <div class="opts"><label><span class="cb"></span>대소문자 구분</label><label><span class="cb"></span>단어 단위로만</label></div>
+      <div class="sec"><span>등록한 단어 6</span><span>이 페이지 <b class="tnum">23</b>건</span></div>
+      <div class="chips">
+        <span class="chip sel" style="background:#ffe066"><span>사과</span><span class="n tnum">12</span></span>
+        <span class="chip" style="background:#b2f2bb"><span>바나나</span><span class="n tnum">5</span><span class="x"><svg class="i"><use href="#x"/></svg></span></span>
+        <span class="chip" style="background:#a5d8ff"><span>포도</span><span class="n tnum">3</span></span>
+        <span class="chip off" style="background:#ffc9c9"><span>딸기</span><span class="n">0</span></span>
+        <span class="chip" style="background:#e5dbff"><span>apple pie</span><span class="n tnum">1</span></span>
+        <span class="chip" style="background:#ffd8a8"><span>계약서</span><span class="n tnum">2</span></span>
+      </div>
+      <div class="card">
+        <div class="row"><span class="dot" style="background:#fcc419"></span><b>사과</b><span class="pos tnum">3 / 12</span></div>
+        <div class="acts">
+          <div class="g"><svg class="i"><use href="#up"/></svg>이전</div>
+          <div class="p">다음<svg class="i"><use href="#down"/></svg></div>
+          <div class="s"><svg class="i"><use href="#eye"/></svg></div>
+          <div class="s"><span style="width:14px;height:14px;border-radius:4px;background:#ffe066;box-shadow:inset 0 0 0 1px rgba(0,0,0,.1)"></span></div>
+        </div>
+      </div>
+      <div class="ft"><span>naver.com</span><span class="sp"></span><span style="color:#dc2626">모두 삭제</span></div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div>
+    <p class="label">B. 태그 입력형</p>
+    <p class="sub">입력창 안에 블록이 바로 쌓이는 방식. 입력과 목록이 한 곳에</p>
+    <div class="frame B">
+      <div class="hd"><span class="ttl">하이라이터</span><span class="sp"></span><div class="ib"><svg class="i"><use href="#sliders"/></svg></div><div class="ib"><svg class="i"><use href="#x"/></svg></div></div>
+      <div class="box chips">
+        <span class="chip sel" style="background:#ffe066"><span>사과</span><span class="n tnum">12</span></span>
+        <span class="chip" style="background:#b2f2bb"><span>바나나</span><span class="n tnum">5</span></span>
+        <span class="chip" style="background:#a5d8ff"><span>포도</span><span class="n tnum">3</span><span class="x"><svg class="i"><use href="#x"/></svg></span></span>
+        <span class="chip off" style="background:#ffc9c9"><span>딸기</span><span class="n">0</span></span>
+        <span class="chip" style="background:#e5dbff"><span>apple pie</span><span class="n tnum">1</span></span>
+        <span class="chip" style="background:#ffd8a8"><span>계약서</span><span class="n tnum">2</span></span>
+        <span class="caret"><i></i>단어 입력</span>
+      </div>
+      <div class="hint"><span><kbd>Enter</kbd> 추가</span><span><kbd>,</kbd> 여러 개</span><span><kbd>⌫</kbd> 마지막 삭제</span></div>
+      <div class="seg"><div class="on">부분 일치</div><div>단어 단위</div><div>Aa 구분</div></div>
+      <div class="nav">
+        <div class="top"><span style="width:10px;height:10px;border-radius:3px;background:#fcc419"></span>선택한 단어</div>
+        <div class="w">사과 <small class="tnum">3번째 / 12개</small></div>
+        <div class="bar">
+          <i style="left:4%"></i><i style="left:11%"></i><i class="cur" style="left:19%"></i><i style="left:27%"></i><i style="left:35%"></i><i style="left:46%"></i><i style="left:52%"></i><i style="left:61%"></i><i style="left:70%"></i><i style="left:78%"></i><i style="left:88%"></i><i style="left:95%"></i>
+        </div>
+        <div class="btns"><div><svg class="i"><use href="#up"/></svg>이전</div><div>다음<svg class="i"><use href="#down"/></svg></div></div>
+      </div>
+      <div class="ft"><span>총 23건 표시 중</span><span class="sp"></span>표시<span class="tg"></span></div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div>
+    <p class="label">C. 다크형</p>
+    <p class="sub">어두운 화면. 블록은 테두리와 점으로만 색을 표시</p>
+    <div class="frame C">
+      <div class="hd"><span class="ttl">Multi Highlighter</span><span class="badge tnum">23</span><span class="sp"></span><div class="ib on"><svg class="i"><use href="#power"/></svg></div><div class="ib"><svg class="i"><use href="#x"/></svg></div></div>
+      <div class="in"><svg class="i"><use href="#plus"/></svg><span>단어 추가</span><kbd>Enter</kbd></div>
+      <div class="chips">
+        <span class="chip sel" style="border-color:#fcc419"><span class="d" style="background:#fcc419"></span><span>사과</span><span class="n tnum">12</span></span>
+        <span class="chip" style="border-color:rgba(81,207,102,.45)"><span class="d" style="background:#51cf66"></span><span>바나나</span><span class="n tnum">5</span><span class="x"><svg class="i"><use href="#x"/></svg></span></span>
+        <span class="chip" style="border-color:rgba(77,171,247,.45)"><span class="d" style="background:#4dabf7"></span><span>포도</span><span class="n tnum">3</span></span>
+        <span class="chip off"><span class="d" style="background:#ff8787"></span><span>딸기</span><span class="n">0</span></span>
+        <span class="chip" style="border-color:rgba(151,117,250,.45)"><span class="d" style="background:#9775fa"></span><span>apple pie</span><span class="n tnum">1</span></span>
+        <span class="chip" style="border-color:rgba(255,146,43,.45)"><span class="d" style="background:#ff922b"></span><span>계약서</span><span class="n tnum">2</span></span>
+      </div>
+      <div class="det"><span class="d" style="background:#fcc419"></span><b>사과</b><span class="pos tnum">3/12</span><div class="ib"><svg class="i"><use href="#up"/></svg></div><div class="ib"><svg class="i"><use href="#down"/></svg></div></div>
+      <div class="opts"><div class="on">부분 일치</div><div>단어 단위</div><div>Aa 구분</div></div>
+      <div class="dist"><div class="t"><span>이 페이지 분포</span><span class="tnum">23건</span></div>
+        <div class="bar"><span style="flex:12;background:#fcc419"></span><span style="flex:5;background:#51cf66"></span><span style="flex:3;background:#4dabf7"></span><span style="flex:2;background:#ff922b"></span><span style="flex:1;background:#9775fa"></span></div>
+      </div>
+      <div class="ft"><span><kbd>Alt</kbd> <kbd>↓</kbd> 다음</span><span><kbd>Alt</kbd> <kbd>↑</kbd> 이전</span></div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div>
+    <p class="label">D. 미니멀 점형</p>
+    <p class="sub">여백 많은 단정한 안. 선택하면 블록이 검게 반전, 하단 바로 이동</p>
+    <div class="frame D">
+      <div class="hd"><span class="ttl">하이라이터</span><span class="sp"></span><div class="ib"><svg class="i"><use href="#power"/></svg></div><div class="ib"><svg class="i"><use href="#more"/></svg></div><div class="ib"><svg class="i"><use href="#x"/></svg></div></div>
+      <div class="in"><span>단어를 입력하세요</span><span class="plus"><svg class="i"><use href="#plus"/></svg></span></div>
+      <div class="meta"><span class="big tnum">23</span><span class="s">건 표시 중</span><span class="opt"><span class="on">부분</span><span>단어</span><span>Aa</span></span></div>
+      <div class="chips">
+        <span class="chip sel"><span class="d" style="background:#ffd43b"></span><span>사과</span><span class="n tnum">12</span></span>
+        <span class="chip"><span class="d" style="background:#69db7c"></span><span>바나나</span><span class="n tnum">5</span></span>
+        <span class="chip"><span class="d" style="background:#74c0fc"></span><span>포도</span><span class="n tnum">3</span></span>
+        <span class="chip off"><span class="d" style="background:#ffa8a8"></span><span>딸기</span><span class="n">0</span></span>
+        <span class="chip"><span class="d" style="background:#d0bfff"></span><span>apple pie</span><span class="n tnum">1</span><span class="x"><svg class="i"><use href="#x"/></svg></span></span>
+        <span class="chip"><span class="d" style="background:#ffc078"></span><span>계약서</span><span class="n tnum">2</span></span>
+      </div>
+      <div class="stepper"><span class="w">사과</span><span class="pos tnum">3 / 12</span><div class="ib"><svg class="i"><use href="#up"/></svg></div><div class="ib"><svg class="i"><use href="#down"/></svg></div></div>
+      <div class="ft"><span>naver.com</span><span class="sp"></span><span>설정</span></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
